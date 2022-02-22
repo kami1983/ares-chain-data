@@ -1,0 +1,47 @@
+specVersion: 0.2.0
+name: hello-ares
+version: 0.0.4
+description: This SubQuery project can be use as a st...
+repository:
+schema:
+  file: ./schema.graphql
+network:
+#  endpoint: wss://gladios.aresprotocol.io
+  genesisHash: '0x648ac9e6363ce4ff03ff2b25c01cdcfd449d2ee14f63684a3b8c5c365d848a44'
+#  endpoint: ws://127.0.0.1:9949
+#  endpoint: ws://192.168.50.220:9949
+  endpoint: ws://202.182.100.187:7644
+#  genesisHash: '0xd18bcb44da1badfcf73959152106967346cdaaf7ef6aae8d3abe3a751174a5ae'
+  chaintypes:
+    file: ./types.json
+dataSources:
+  - kind: substrate/Runtime
+#    startBlock: 78000
+    startBlock: 9000
+    mapping:
+      file: ./dist/index.js
+      handlers:
+#        - handler: handleBlock
+#          kind: substrate/BlockHandler
+#        - handler: handleCall
+#          kind: substrate/CallHandler
+        - handler: handleEventAresOraclePurchasedAvgPrice
+          kind: substrate/EventHandler
+          filter:
+            module: aresOracle
+            method: PurchasedAvgPrice
+        - handler: handleEventAresOracleNewPurchasedRequest
+          kind: substrate/EventHandler
+          filter:
+            module: aresOracle
+            method: NewPurchasedRequest
+        - handler: handleEventAresOracleNewPreCheckTask
+          kind: substrate/EventHandler
+          filter:
+            module: aresOracle
+            method: NewPreCheckTask
+        - handler: handleEventAresOracleNewPreCheckResult
+          kind: substrate/EventHandler
+          filter:
+            module: aresOracle
+            method: NewPreCheckResult

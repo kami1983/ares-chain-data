@@ -1,0 +1,60 @@
+
+type PurchasedAvgPriceEvent @entity {
+  id: ID! # Id's purchase_id
+  purchased_id: String
+  raw_result_list: String
+  result_list: [AskResultJson]
+}
+
+type AskResultJson @jsonField {
+  price_key: String!
+  create_bn: String!
+  reached_type: Int!
+  respondents: [String]!
+}
+
+type NewPurchasedRequestEvent @entity {
+  id: ID! # Id's purchase_id
+  prepayments: BigInt!
+  account_id: String!
+  offer: BigInt!
+  create_bn: String!
+  submit_threshold: String!
+  max_duration: String!
+  request_keys: [String]!
+  avg_result: PurchasedAvgPriceEvent
+}
+
+# ------ NewPreCheckTask && NewPreCheckResult
+
+type NewPreCheckTask @entity {
+  id: ID! # blocknumber+Eventid
+  stash_account: String! @index
+  ares_account: String!
+  create_bn: String!
+  event_bn: String!
+  check_result: NewPreCheckResult!
+}
+
+type NewPreCheckResult @entity {
+  id: ID! # stash_account+create_bn
+  stash_account: String! @index
+  create_bn: String!
+  event_bn: String
+  work_data: [PreCheckStruct]!
+  task_infos: [NewPreCheckTask] @derivedFrom(field: "check_result")
+}
+
+type PreCheckStruct @jsonField {
+  price_key: String!
+  number_val: JsonNumberValue
+  max_offset: String!
+  timestamp: String!
+}
+
+type JsonNumberValue @jsonField {
+  integer: String!
+  fraction: String!
+  fraction_length: String!
+  exponent: String!
+}
