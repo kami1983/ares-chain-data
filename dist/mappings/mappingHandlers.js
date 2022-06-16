@@ -319,7 +319,7 @@ async function handleEventSessionNewSession(event) {
         record.staking_current_era = parseInt(currentEra.value.toString());
         record.staking_active_era = parseInt(activeEra.value.toJSON()['index']);
         // Rewards are always generated at the end of era so update the previous era's reward.
-        const reward_staking_active_era = record.staking_active_era - 1;
+        const reward_staking_active_era = record.staking_active_era - 1 > 0 ? record.staking_active_era - 1 : 0;
         const validator_reward = await api.query.staking.erasValidatorReward(reward_staking_active_era);
         if (validator_reward.isSome) {
             const [stakingRewardObj, isNew] = await makeStakingRewardRecord(`${reward_staking_active_era}`);
