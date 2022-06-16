@@ -3,7 +3,7 @@ version: "3"
 services:
   ares_substrate_tools:
     build:
-      context: https://github.com/kami1983/ares-chain-fornt-end.git
+      context: https://github.com/kami1983/ares-chain-fornt-end.git#master
       dockerfile: ./Dockerfile
     container_name: ares_substrate_tools
     image: aresprotocollab/ares_substrate_tools
