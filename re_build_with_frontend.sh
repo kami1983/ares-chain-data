@@ -1,3 +1,4 @@
+yarn install
 docker-compose -f docker-compose-with-frontend.yml down
 #rm -rf .data
 yarn codegen
