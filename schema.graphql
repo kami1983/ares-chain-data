@@ -1,10 +1,82 @@
-
-type PurchasedAvgPriceEvent @entity {
-  id: ID! # Id's purchase_id
-  purchased_id: String
-  raw_result_list: String
-  result_list: [AskResultJson]
+type AresAccount @entity {
+  id: ID!
+  staking_total_reward: BigInt
+  ref_staking_bonded_events: [StakingBondedEvent] @derivedFrom(field: "who")
+  ref_staking_chilled_events: [StakingChilledEvent] @derivedFrom(field: "who")
+  ref_staking_im_online_some_offline_events: [ImOnlineSomeOfflineEvent] @derivedFrom(field: "who")
 }
+
+type StakingBondedEvent @entity {
+  id: ID! #
+  who: AresAccount
+  deposit: BigInt
+  event_bn: BigInt
+  timestamp: BigInt
+  timestring: String
+}
+
+type StakingChilledEvent @entity {
+  id: ID! #
+  who: AresAccount
+  event_bn: BigInt
+  timestamp: BigInt
+  timestring: String
+}
+
+type ImOnlineSomeOfflineEvent @entity {
+  id: ID! #
+  who: AresAccount
+  deposit: BigInt
+  type: String
+  event_bn: BigInt
+  timestamp: BigInt
+  timestring: String
+}
+
+#session.NewSession
+type SessionNewSessionEvent @entity {
+  id: ID! #
+  session_id: Int
+  event_bn: BigInt
+  validator_count: Int
+  validator_set: [String]
+  staking_current_era: Int
+  staking_active_era: Int
+  timestamp: BigInt
+  timestring: String
+}
+
+type StakingRewardRecord @entity {
+  id: ID! #
+  event_bn: BigInt
+  staking_era: Int
+  eras_validator_reward: BigInt
+}
+
+# total amount of rewards received
+type TotalAmountOfRewardRecord @entity {
+  id: ID! #
+  total_reward_of_claimed: BigInt
+  total_reward_of_minted: BigInt
+}
+
+type StakingErasTotalStakeRecord @entity {
+  id: ID! #
+  era: Int
+  deposit: BigInt
+}
+
+#staking.Rewarded
+type StakingRewardedEvent @entity {
+  id: ID! #
+  who: AresAccount
+  event_bn: BigInt
+  deposit: BigInt
+  timestamp: BigInt
+  timestring: String
+}
+
+#######
 
 type AskResultJson @jsonField {
   price_key: String!
@@ -13,16 +85,53 @@ type AskResultJson @jsonField {
   respondents: [String]!
 }
 
+type PurchasedAvgPriceEvent @entity {
+  id: ID! # Id's purchase_id
+  purchased_id: String
+  purchased_event: NewPurchasedRequestEvent!
+  raw_result_list: String
+  result_list: [AskResultJson]
+}
+
 type NewPurchasedRequestEvent @entity {
   id: ID! # Id's purchase_id
-  prepayments: BigInt!
-  account_id: String!
-  offer: BigInt!
-  create_bn: String!
-  submit_threshold: String!
-  max_duration: String!
-  request_keys: [String]!
-  avg_result: PurchasedAvgPriceEvent
+  prepayments: BigInt
+  account_id: String
+  offer: BigInt
+  create_bn: String
+  submit_threshold: String
+  max_duration: String
+  request_keys: [String]
+  avg_result: [PurchasedAvgPriceEvent] @derivedFrom(field: "purchased_event")
+  insufficient_count_result: [InsufficientCountOfValidators] @derivedFrom(field: "purchased_event")
+  pay_for_result: [PayForPurchase] @derivedFrom(field: "purchased_event")
+}
+
+#aresOracle.InsufficientCountOfValidators
+type InsufficientCountOfValidators @entity {
+  id: ID! # blocknumber+Eventid
+  event_bn: String,
+  purchased_id: String,
+  purchased_event: NewPurchasedRequestEvent!
+}
+
+# aresOracle.PayForPurchase
+#agg_count: agg_count as u32,
+#dest: Self::account_id(),
+#fee: actual_amount,
+#purchase_id: p_id,
+#unreserve_balance: paid_value.amount,
+#who: who.clone(),
+type PayForPurchase @entity {
+  id: ID! # blocknumber+Eventid
+  agg_count: Int,
+  dest: String,
+  event_bn: String,
+  fee: BigInt! @index,
+  purchased_id: String,
+  purchased_event: NewPurchasedRequestEvent!
+  unreserve_balance: BigInt! @index,
+  who: String,
 }
 
 # ------ NewPreCheckTask && NewPreCheckResult
@@ -42,7 +151,31 @@ type NewPreCheckResult @entity {
   create_bn: String!
   event_bn: String
   work_data: [PreCheckStruct]!
+  result_status: String
   task_infos: [NewPreCheckTask] @derivedFrom(field: "check_result")
+}
+
+type PurchaseRewardToken @entity {
+  id: ID! # blocknumber+Eventid
+  event_bn: String,
+  era_num: Int! @index,
+  who: String! @index,
+  reward: BigInt! @index
+}
+
+type TotalPurchaseRewardToken @entity {
+  id: ID! # 'TotalPurchaseRewardToken'
+  reward: BigInt!
+}
+
+# oracleFinance.EndOfAskEra
+type EndOfAskEra @entity {
+  id: ID! # blocknumber+Eventid
+  event_bn: String,
+  session_index: Int! @index,
+  era_num: Int! @index,
+  era_income: BigInt! @index,
+  era_points: BigInt! @index
 }
 
 type PreCheckStruct @jsonField {
@@ -58,3 +191,4 @@ type JsonNumberValue @jsonField {
   fraction_length: String!
   exponent: String!
 }
+
