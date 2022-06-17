@@ -19,8 +19,8 @@ dataSources:
 #    startBlock: 78000
     # 这个区块是 2022-06-10 0点之前的区块
 #    startBlock: 433151
-#    startBlock: 477200
-    startBlock: 1
+    startBlock: 477200
+#    startBlock: 1
     mapping:
       file: ./dist/index.js
       handlers:
