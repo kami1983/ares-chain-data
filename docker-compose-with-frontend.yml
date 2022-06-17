@@ -27,7 +27,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+# Update subquery.
   subquery-node:
     image: onfinality/subql-node:latest
     depends_on:
