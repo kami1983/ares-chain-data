@@ -6,7 +6,7 @@ services:
       context: ./ares-mail
       dockerfile: ./Dockerfile
     container_name: ares_mail
-    image: aresprotocollab/ares_substrate_tools
+    image: aresprotocollab/ares_mail
     logging:
       driver: json-file
       options:
