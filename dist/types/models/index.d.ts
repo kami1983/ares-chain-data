@@ -11,6 +11,7 @@ export { PurchasedAvgPriceEvent } from "./PurchasedAvgPriceEvent";
 export { NewPurchasedRequestEvent } from "./NewPurchasedRequestEvent";
 export { InsufficientCountOfValidators } from "./InsufficientCountOfValidators";
 export { PayForPurchase } from "./PayForPurchase";
+export { CrossChainRequestEvent } from "./CrossChainRequestEvent";
 export { NewPreCheckTask } from "./NewPreCheckTask";
 export { NewPreCheckResult } from "./NewPreCheckResult";
 export { PurchaseRewardToken } from "./PurchaseRewardToken";

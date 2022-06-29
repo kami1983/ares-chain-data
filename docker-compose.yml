@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+
   postgres:
     image: postgres:12-alpine
     ports:
@@ -14,9 +15,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-#    networks:
-#      chain_net:
-#        ipv4_address: 172.16.232.8
 
   subquery-node:
     image: onfinality/subql-node:latest
@@ -34,15 +32,14 @@ services:
       - ./:/app
     command:
       - -f=/app
+      - --unsafe
       - --db-schema=app
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
       timeout: 5s
       retries: 10
-#    networks:
-#      chain_net:
-#        ipv4_address: 172.16.232.9
 
   graphql-engine:
     image: onfinality/subql-query:latest
@@ -64,12 +61,5 @@ services:
       - --name=app
       - --playground
       - --indexer=http://subquery-node:3000
-#    networks:
-#      chain_net:
-#        ipv4_address: 172.16.232.10
-#networks:
-#  chain_net:
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: "172.16.232.0/24"
+
+

@@ -134,6 +134,24 @@ type PayForPurchase @entity {
   who: String,
 }
 
+
+# manualBridge.CrossChainRequest
+#CrossChainRequest {
+#acc: T::AccountId,
+#ident: Ident,
+#kind: CrossChainKind,
+#amount: BalanceOf<T>
+#},
+type CrossChainRequestEvent @entity {
+  id: ID! #
+  acc: String,
+  iden: String,
+  kind: String,
+  dest: String,
+  status: String,
+  amount: BigInt! @index,
+}
+
 # ------ NewPreCheckTask && NewPreCheckResult
 
 type NewPreCheckTask @entity {

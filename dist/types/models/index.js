@@ -1,7 +1,7 @@
 "use strict";
 // SPDX-License-Identifier: Apache-2.0
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EndOfAskEra = exports.TotalPurchaseRewardToken = exports.PurchaseRewardToken = exports.NewPreCheckResult = exports.NewPreCheckTask = exports.PayForPurchase = exports.InsufficientCountOfValidators = exports.NewPurchasedRequestEvent = exports.PurchasedAvgPriceEvent = exports.StakingRewardedEvent = exports.StakingErasTotalStakeRecord = exports.TotalAmountOfRewardRecord = exports.StakingRewardRecord = exports.SessionNewSessionEvent = exports.ImOnlineSomeOfflineEvent = exports.StakingChilledEvent = exports.StakingBondedEvent = exports.AresAccount = void 0;
+exports.EndOfAskEra = exports.TotalPurchaseRewardToken = exports.PurchaseRewardToken = exports.NewPreCheckResult = exports.NewPreCheckTask = exports.CrossChainRequestEvent = exports.PayForPurchase = exports.InsufficientCountOfValidators = exports.NewPurchasedRequestEvent = exports.PurchasedAvgPriceEvent = exports.StakingRewardedEvent = exports.StakingErasTotalStakeRecord = exports.TotalAmountOfRewardRecord = exports.StakingRewardRecord = exports.SessionNewSessionEvent = exports.ImOnlineSomeOfflineEvent = exports.StakingChilledEvent = exports.StakingBondedEvent = exports.AresAccount = void 0;
 // Auto-generated , DO NOT EDIT
 var AresAccount_1 = require("./AresAccount");
 Object.defineProperty(exports, "AresAccount", { enumerable: true, get: function () { return AresAccount_1.AresAccount; } });
@@ -29,6 +29,8 @@ var InsufficientCountOfValidators_1 = require("./InsufficientCountOfValidators")
 Object.defineProperty(exports, "InsufficientCountOfValidators", { enumerable: true, get: function () { return InsufficientCountOfValidators_1.InsufficientCountOfValidators; } });
 var PayForPurchase_1 = require("./PayForPurchase");
 Object.defineProperty(exports, "PayForPurchase", { enumerable: true, get: function () { return PayForPurchase_1.PayForPurchase; } });
+var CrossChainRequestEvent_1 = require("./CrossChainRequestEvent");
+Object.defineProperty(exports, "CrossChainRequestEvent", { enumerable: true, get: function () { return CrossChainRequestEvent_1.CrossChainRequestEvent; } });
 var NewPreCheckTask_1 = require("./NewPreCheckTask");
 Object.defineProperty(exports, "NewPreCheckTask", { enumerable: true, get: function () { return NewPreCheckTask_1.NewPreCheckTask; } });
 var NewPreCheckResult_1 = require("./NewPreCheckResult");

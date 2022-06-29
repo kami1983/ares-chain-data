@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
+exports.handleCrossChainRequestEvent = exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
 const types_1 = require("../types");
 // created_at: T::BlockNumber,
 //     era: EraIndex,
@@ -360,3 +360,65 @@ async function handleEventStakingRewarded(event) {
     await rewardObj.save();
 }
 exports.handleEventStakingRewarded = handleEventStakingRewarded;
+async function handleCrossChainRequestEvent(event) {
+    const { event: { data: [acc, ident, kind, amount] } } = event;
+    const timestamp = await api.query.timestamp.now();
+    // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
+    logger.info(` #### handleCrossChainRequestEvent ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`);
+    let record = new types_1.CrossChainRequestEvent(`${event.block.block.header.number.toString()}-${event.idx}`);
+    record.acc = acc.toString();
+    record.iden = `${ident.toString()}`;
+    record.amount = BigInt(amount.toString());
+    // @ts-ignore
+    if (kind.isEth) {
+        record.kind = 'eth';
+        // @ts-ignore
+        record.dest = kind.asEth.toString();
+        // @ts-ignore
+    }
+    else if (kind.isBsc) {
+        record.kind = 'bsc';
+        // @ts-ignore
+        record.dest = kind.asBsc.toString();
+    }
+    logger.info("################### A");
+    logger.info(record.acc);
+    logger.info(record.iden);
+    logger.info(record.amount);
+    logger.info(record.kind);
+    logger.info(record.dest);
+    logger.info("################### B");
+    await record.save();
+    // const response = await axios.get('https://api.atocha.io/twitter_bind/5EUwwkgp1wyNNaG9QEdsM5EFWtS46WUcDT5Bkq4tEJapD9ZP');
+    // logger.info("################### B")
+    // logger.info(response);
+    // const requestPromise = util.promisify(request);
+    // const response = await requestPromise('https://api.atocha.io/twitter_bind/5EUwwkgp1wyNNaG9QEdsM5EFWtS46WUcDT5Bkq4tEJapD9ZP');
+    // console.log('response', response.body);
+    // createFun();
+    // async function createFun() {
+    //     // create reusable transporter object using the default SMTP transport
+    //     let transporter = nodemailer.createTransport({
+    //         host: "smtp.163.com",
+    //         port: 465,
+    //         secure: true, // true for 465, false for other ports
+    //         auth: {
+    //             user: 'test@cancanyou.com', // generated ethereal user
+    //             pass: 'test123456', // generated ethereal password
+    //         },
+    //     });
+    //     // send mail with defined transport object
+    //     let info = await transporter.sendMail({
+    //         from: '"Fred Foo 👻" <cross_chain_request@ares.com>', // sender address
+    //         to: "630086711@qq.com", // list of receivers
+    //         subject: "Hello ✔", // Subject line
+    //         text: "Hello world?", // plain text body
+    //         html: "<b>Hello world?</b>", // html body
+    //     });
+    //     logger.info("Message sent: %s", info.messageId);
+    //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+    //     // Preview only available when sending through an Ethereal account
+    //     logger.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // }
+}
+exports.handleCrossChainRequestEvent = handleCrossChainRequestEvent;

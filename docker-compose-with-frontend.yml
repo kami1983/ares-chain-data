@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  ares_mail:
+    build:
+      context: ./ares-mail
+      dockerfile: ./Dockerfile
+    container_name: ares_mail
+    image: aresprotocollab/ares_substrate_tools
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "10"
+
   ares_substrate_tools:
     build:
       context: https://github.com/kami1983/ares-chain-fornt-end.git#v1.0.2
@@ -14,6 +26,8 @@ services:
       options:
         max-size: "20m"
         max-file: "10"
+    command: /bin/bash -c "yarn start"
+
   postgres:
     image: postgres:12-alpine
     ports:
@@ -27,6 +41,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
 # Update subquery.
   subquery-node:
     image: onfinality/subql-node:latest
