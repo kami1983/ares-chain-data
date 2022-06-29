@@ -15,7 +15,7 @@ services:
 
   ares_substrate_tools:
     build:
-      context: https://github.com/kami1983/ares-chain-fornt-end.git#v1.0.2
+      context: https://github.com/kami1983/ares-chain-fornt-end.git#v1.0.4
       dockerfile: ./Dockerfile
     container_name: ares_substrate_tools
     image: aresprotocollab/ares_substrate_tools
@@ -26,8 +26,6 @@ services:
       options:
         max-size: "20m"
         max-file: "10"
-    command: /bin/bash -c "yarn start"
-
   postgres:
     image: postgres:12-alpine
     ports:
@@ -41,8 +39,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-# Update subquery.
+  # Update subquery.
   subquery-node:
     image: onfinality/subql-node:latest
     depends_on:
