@@ -6,10 +6,10 @@ repository:
 schema:
   file: ./schema.graphql
 network:
-  endpoint: wss://gladios.aresprotocol.io
-  genesisHash: '0xa8a43b9e46db3280e956efd95c3fb2bac8919d62f01a0cf0054cf3cbdce9130b'
-#  endpoint: ws://192.168.50.44:9944
-#  genesisHash: '0x857363a7e417fad1bfb5bcb721a4138aaaef808c217c47ccec84b6dcfc4ee3ba'
+#  endpoint: wss://gladios.aresprotocol.io
+#  genesisHash: '0xa8a43b9e46db3280e956efd95c3fb2bac8919d62f01a0cf0054cf3cbdce9130b'
+  endpoint: ws://192.168.50.44:9944
+  genesisHash: '0xb8f3755a5250d66e20316f04a7b0981735202f758abafc46fbf1ec19a397d2b0'
   chaintypes:
     file: ./types.json
 dataSources:

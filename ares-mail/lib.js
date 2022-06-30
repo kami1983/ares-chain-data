@@ -78,7 +78,7 @@ async function sendEmail(sender, to, dbData) {
 
     let info = await transporter.sendMail({
         from: '"Cross chain service 👻" <test@cancanyou.com>', // sender address
-        to: "630086711@qq.com", // list of receivers
+        to: process.env.MAIL_TO, // list of receivers
         subject: `On cross chain event - ${dbData.iden}`, // Subject line
         text: `On cross chain event - ${dbData.iden}`, // plain text body
         html: `
@@ -95,7 +95,7 @@ async function sendEmail(sender, to, dbData) {
 `, // html body
     });
 
-    // console.info("Message sent: %s", info.messageId);
+    console.info("Message sent: %s", info.messageId);
     // console.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
     return info.messageId
