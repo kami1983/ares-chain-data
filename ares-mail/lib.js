@@ -85,6 +85,7 @@ async function sendEmail(sender, to, dbData) {
 <p>波卡账号：${dbData.acc}</p>
 <p>数据ID：${dbData.id}</p>
 <p>链上ID：${dbData.iden}</p>
+<p>请求区块：${dbData.create_bn}</p>
 <p>分类：${dbData.kind}</p>
 <p>目标地址：${dbData.dest}</p>
 <p>金额(全整数)：${dbData.amount} （需要注意这个实际上是需要除以10的12次方）</p>
