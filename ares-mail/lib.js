@@ -24,7 +24,9 @@ module.exports.checkAndSendCrossChainEmails = function () {
                     const db_data = db_res.rows[idx]
                     if (!db_data.status) {
                         const emailId = await sendEmail('test@cancanyou.com', '630086711@qq.com',  db_data)
-                        updateEventStatus(db_data.id, emailId)
+                        if("" != emailId) {
+                            updateEventStatus(db_data.id, emailId)
+                        }
                     }
                     result.message = JSON.stringify(db_res.rows)
                     result.status_info = 'success'
@@ -65,23 +67,24 @@ function updateEventStatus(db_id, email_id) {
 }
 
 async function sendEmail(sender, to, dbData) {
+    try{
 
-    let transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: process.env.MAIL_SMTP_PORT,
-        secure: process.env.MAIL_SMTP_SECURE, // true for 465, false for other ports
-        auth: {
-            user: process.env.MAIL_AUTH_USER, // generated ethereal user
-            pass: process.env.MAIL_AUTH_PASS,// generated ethereal password
-        },
-    });
+        let transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_SMTP_PORT,
+            secure: process.env.MAIL_SMTP_SECURE, // true for 465, false for other ports
+            auth: {
+                user: process.env.MAIL_AUTH_USER, // generated ethereal user
+                pass: process.env.MAIL_AUTH_PASS,// generated ethereal password
+            },
+        });
 
-    let info = await transporter.sendMail({
-        from: '"Cross chain service 👻" <test@cancanyou.com>', // sender address
-        to: process.env.MAIL_TO, // list of receivers
-        subject: `On cross chain event - ${dbData.iden}`, // Subject line
-        text: `On cross chain event - ${dbData.iden}`, // plain text body
-        html: `
+        let info = await transporter.sendMail({
+            from: '"Cross chain service 👻" <test@cancanyou.com>', // sender address
+            to: process.env.MAIL_TO, // list of receivers
+            subject: `On cross chain event - ${dbData.iden}`, // Subject line
+            text: `On cross chain event - ${dbData.iden}`, // plain text body
+            html: `
 <p>波卡账号：${dbData.acc}</p>
 <p>数据ID：${dbData.id}</p>
 <p>链上ID：${dbData.iden}</p>
@@ -94,10 +97,13 @@ async function sendEmail(sender, to, dbData) {
 <p>输入序列：</p>
 <p><b>${dbData.acc},${dbData.iden},${dbData.kind},${dbData.dest},${dbData.amount}</b></p>
 `, // html body
-    });
+        });
 
-    console.info("Message sent: %s", info.messageId);
-    // console.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        console.info("Message sent: %s", info.messageId);
+        // console.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
-    return info.messageId
+        return info.messageId
+    }catch(e){
+        return ""
+    }
 }
