@@ -13,3 +13,4 @@ export declare function handleEventImOnlineSomeOffline(event: SubstrateEvent): P
 export declare function handleEventSessionNewSession(event: SubstrateEvent): Promise<void>;
 export declare function handleEventStakingRewarded(event: SubstrateEvent): Promise<void>;
 export declare function handleCrossChainRequestEvent(event: SubstrateEvent): Promise<void>;
+export declare function handleManualBridgeCompletedListEvent(event: SubstrateEvent): Promise<void>;

@@ -145,12 +145,35 @@ type PayForPurchase @entity {
 type CrossChainRequestEvent @entity {
   id: ID! #
   acc: String,
+  create_bn: BigInt @index,
+  final_type: Int,
   iden: String,
   kind: String,
   dest: String,
   status: String,
   amount: BigInt! @index,
 }
+
+#manualBridge.CompletedList
+#Completed cross-chain requests
+#Vec<ManualBridgeCrossChainInfo> (Vec<T>)
+#0: ManualBridgeCrossChainInfo: ManualBridgeCrossChainInfo
+#{
+#iden: 0xa32d000001
+#kind: {
+#BSC: 0x766df9f905cae2d8560672239ca29e1e52bae65d
+#}
+#amount: 699,000,000,000,000
+#}
+#type ManualBridgeCompletedListEvent @entity {
+#  id: ID! #
+#  acc: String,
+#  iden: String,
+#  kind: String,
+#  dest: String,
+#  status: String,
+#  amount: BigInt! @index,
+#}
 
 # ------ NewPreCheckTask && NewPreCheckResult
 

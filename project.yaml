@@ -10,13 +10,15 @@ network:
 #  genesisHash: '0xa8a43b9e46db3280e956efd95c3fb2bac8919d62f01a0cf0054cf3cbdce9130b'
 #  endpoint: ws://192.168.50.44:9944
 #  genesisHash: '0xb8f3755a5250d66e20316f04a7b0981735202f758abafc46fbf1ec19a397d2b0'
-  endpoint: ws://202.182.100.187:19944
-  genesisHash: '0x9ed76c03eb5c876f98df99154b2df716646ba475d4bdf66551c919c346724cc4'
+#  endpoint: ws://202.182.100.187:19944
+#  genesisHash: '0x9ed76c03eb5c876f98df99154b2df716646ba475d4bdf66551c919c346724cc4'
+  endpoint: ws://202.182.100.187:7644
+  genesisHash: '0xddd65d7a8b2451266327867d76d3262f859a0335a0b4d1180cb3aab59585ce33'
   chaintypes:
     file: ./types.json
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1
+    startBlock: 380
     mapping:
       file: ./dist/index.js
       handlers:
@@ -94,3 +96,8 @@ dataSources:
           filter:
             module: manualBridge
             method: CrossChainRequest
+        - handler: handleManualBridgeCompletedListEvent
+          kind: substrate/EventHandler
+          filter:
+            module: manualBridge
+            method: CompletedList

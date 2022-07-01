@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleCrossChainRequestEvent = exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
+exports.handleManualBridgeCompletedListEvent = exports.handleCrossChainRequestEvent = exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
 const types_1 = require("../types");
 // created_at: T::BlockNumber,
 //     era: EraIndex,
@@ -365,9 +365,11 @@ async function handleCrossChainRequestEvent(event) {
     const timestamp = await api.query.timestamp.now();
     // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
     logger.info(` #### handleCrossChainRequestEvent ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`);
-    let record = new types_1.CrossChainRequestEvent(`${event.block.block.header.number.toString()}-${event.idx}`);
+    let record = new types_1.CrossChainRequestEvent(`${ident.toString()}`);
     record.acc = acc.toString();
     record.iden = `${ident.toString()}`;
+    record.create_bn = BigInt(`${event.block.block.header.number.toString()}`);
+    record.final_type = 0;
     record.amount = BigInt(amount.toString());
     // @ts-ignore
     if (kind.isEth) {
@@ -389,36 +391,47 @@ async function handleCrossChainRequestEvent(event) {
     logger.info(record.dest);
     logger.info("################### B");
     await record.save();
-    // const response = await axios.get('https://api.atocha.io/twitter_bind/5EUwwkgp1wyNNaG9QEdsM5EFWtS46WUcDT5Bkq4tEJapD9ZP');
-    // logger.info("################### B")
-    // logger.info(response);
-    // const requestPromise = util.promisify(request);
-    // const response = await requestPromise('https://api.atocha.io/twitter_bind/5EUwwkgp1wyNNaG9QEdsM5EFWtS46WUcDT5Bkq4tEJapD9ZP');
-    // console.log('response', response.body);
-    // createFun();
-    // async function createFun() {
-    //     // create reusable transporter object using the default SMTP transport
-    //     let transporter = nodemailer.createTransport({
-    //         host: "smtp.163.com",
-    //         port: 465,
-    //         secure: true, // true for 465, false for other ports
-    //         auth: {
-    //             user: 'test@cancanyou.com', // generated ethereal user
-    //             pass: 'test123456', // generated ethereal password
-    //         },
-    //     });
-    //     // send mail with defined transport object
-    //     let info = await transporter.sendMail({
-    //         from: '"Fred Foo 👻" <cross_chain_request@ares.com>', // sender address
-    //         to: "630086711@qq.com", // list of receivers
-    //         subject: "Hello ✔", // Subject line
-    //         text: "Hello world?", // plain text body
-    //         html: "<b>Hello world?</b>", // html body
-    //     });
-    //     logger.info("Message sent: %s", info.messageId);
-    //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-    //     // Preview only available when sending through an Ethereal account
-    //     logger.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // }
 }
 exports.handleCrossChainRequestEvent = handleCrossChainRequestEvent;
+// #manualBridge.CompletedList
+// #Completed cross-chain requests
+// #Vec<ManualBridgeCrossChainInfo> (Vec<T>)
+// #0: ManualBridgeCrossChainInfo: ManualBridgeCrossChainInfo
+// #{
+// #iden: 0xa32d000001
+// #kind: {
+// #BSC: 0x766df9f905cae2d8560672239ca29e1e52bae65d
+// #}
+// #amount: 699,000,000,000,000
+// #}
+async function handleManualBridgeCompletedListEvent(event) {
+    const { event: { data: [completedList] } } = event;
+    const completedJson = completedList.toString();
+    // const completedJson = JSON.parse(completedList.toString())
+    logger.info("################### C");
+    logger.info(completedJson);
+    const completedObjList = JSON.parse(completedJson);
+    for (const idx in completedObjList) {
+        const requestEvent = await types_1.CrossChainRequestEvent.get(`${completedObjList[idx].iden}`);
+        if (requestEvent) {
+            requestEvent.final_type = 1;
+            await requestEvent.save();
+        }
+    }
+    // for(const idx in completedList){
+    //     logger.info(idx)
+    //     const completedObj = completedList[idx]
+    //     logger.info(completedObj)
+    //     logger.info("==========================")
+    //     for(const idz in completedObj.toArray()) {
+    //         logger.info(idz)
+    //         logger.info(completedObj.iden)
+    //         logger.info(completedObj.kind)
+    //         logger.info(completedObj.amount)
+    //
+    //     }
+    // }
+    // logger.info(completedList[0].iden)
+    // logger.info(completedList[0].amount)
+}
+exports.handleManualBridgeCompletedListEvent = handleManualBridgeCompletedListEvent;

@@ -26,6 +26,10 @@ class CrossChainRequestEvent {
             return;
         }
     }
+    static async getByCreate_bn(create_bn) {
+        const records = await store.getByField('CrossChainRequestEvent', 'create_bn', create_bn);
+        return records.map(record => CrossChainRequestEvent.create(record));
+    }
     static async getByAmount(amount) {
         const records = await store.getByField('CrossChainRequestEvent', 'amount', amount);
         return records.map(record => CrossChainRequestEvent.create(record));
