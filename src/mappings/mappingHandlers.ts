@@ -543,21 +543,4 @@ export async function handleManualBridgeCompletedListEvent(event: SubstrateEvent
         }
     }
 
-    // for(const idx in completedList){
-    //     logger.info(idx)
-    //     const completedObj = completedList[idx]
-    //     logger.info(completedObj)
-    //     logger.info("==========================")
-    //     for(const idz in completedObj.toArray()) {
-    //         logger.info(idz)
-    //         logger.info(completedObj.iden)
-    //         logger.info(completedObj.kind)
-    //         logger.info(completedObj.amount)
-    //
-    //     }
-    // }
-
-    // logger.info(completedList[0].iden)
-    // logger.info(completedList[0].amount)
-
 }
