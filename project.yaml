@@ -14,13 +14,13 @@ network:
 #  genesisHash: '0x9ed76c03eb5c876f98df99154b2df716646ba475d4bdf66551c919c346724cc4'
 #  endpoint: ws://202.182.100.187:7644
 #  genesisHash: '0xb8bafa2977b149453373c45481f0a3a871b6bc5719d753b3a1403b4d74c14ef2'
-  endpoint: wss://gladios.aresprotocol.io
-  genesisHash: '0x7f141b380e610e2c23c422d16c826124019825e36a3b88521de0900c7c6e2d88'
+  endpoint: wss://odyssey.aresprotocol.io
+  genesisHash: '0xfe7ab916fe68f6e5df37b7778eaffe4d61c4faa915abd12723b08b72895f461e'
   chaintypes:
     file: ./types.json
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 156800
+    startBlock: 1
     mapping:
       file: ./dist/index.js
       handlers:
