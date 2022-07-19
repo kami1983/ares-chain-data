@@ -5,7 +5,7 @@ services:
     build:
       context: ./ares-mail
       dockerfile: ./Dockerfile
-    container_name: ares_mail
+    container_name: ares_mail_odyssey
     environment:
       - PG_USER=postgres
       - PG_HOST=postgres
