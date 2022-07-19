@@ -6,6 +6,18 @@ services:
       context: ./ares-mail
       dockerfile: ./Dockerfile
     container_name: ares_mail
+    environment:
+      - PG_USER=postgres
+      - PG_HOST=postgres
+      - PG_DATABASE=postgres
+      - PG_PASS=postgres_2022
+      - PG_PORT=5432
+      - MAIL_HOST=smtp.ym.163.com
+      - MAIL_SMTP_PORT=994
+      - MAIL_SMTP_SECURE=true
+      - MAIL_AUTH_USER=xx@xx.com
+      - MAIL_AUTH_PASS=xxxx
+      - MAIL_TO=xxx@qq.com
     image: aresprotocollab/ares_mail
     logging:
       driver: json-file
@@ -20,7 +32,7 @@ services:
     container_name: ares_substrate_tools
     image: aresprotocollab/ares_substrate_tools
     ports:
-      - "6680:80"
+      - "6780:80"
     logging:
       driver: json-file
       options:
@@ -29,7 +41,7 @@ services:
   postgres:
     image: postgres:12-alpine
     ports:
-      - 5345:5432
+      - 5445:5432
     volumes:
       - .data/postgres:/var/lib/postgresql/data
     environment:
@@ -66,7 +78,7 @@ services:
   graphql-engine:
     image: onfinality/subql-query:latest
     ports:
-      - 3001:3000
+      - 3101:3000
     depends_on:
       "postgres":
         condition: service_healthy
