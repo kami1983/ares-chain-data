@@ -487,12 +487,13 @@ export async function handleCrossChainRequestEvent(event: SubstrateEvent) : Prom
     } = event;
     const timestamp = await api.query.timestamp.now();
     // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
-    logger.info(` #### handleCrossChainRequestEvent ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`, );
+    logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`, );
     let record = new CrossChainRequestEvent(`${ident.toString()}`)
     record.acc = acc.toString()
     record.iden = `${ident.toString()}`
     record.create_bn = BigInt(`${event.block.block.header.number.toString()}`)
     record.final_type = 0
+    record.tx_hash = event.extrinsic.extrinsic.hash.toString()
     record.amount = BigInt(amount.toString())
     // @ts-ignore
     if(kind.isEth){

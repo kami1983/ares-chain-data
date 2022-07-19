@@ -85,6 +85,7 @@ async function sendEmail(sender, to, dbData) {
             subject: `On cross chain event - ${dbData.iden}`, // Subject line
             text: `On cross chain event - ${dbData.iden}`, // plain text body
             html: `
+<p>交易HASH：${dbData.tx_hash}</p>
 <p>波卡账号：${dbData.acc}</p>
 <p>数据ID：${dbData.id}</p>
 <p>链上ID：${dbData.iden}</p>

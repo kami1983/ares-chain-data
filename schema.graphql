@@ -147,6 +147,7 @@ type CrossChainRequestEvent @entity {
   acc: String,
   create_bn: BigInt @index,
   final_type: Int,
+  tx_hash: String,
   iden: String,
   kind: String,
   dest: String,

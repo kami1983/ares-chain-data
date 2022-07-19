@@ -364,12 +364,13 @@ async function handleCrossChainRequestEvent(event) {
     const { event: { data: [acc, ident, kind, amount] } } = event;
     const timestamp = await api.query.timestamp.now();
     // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
-    logger.info(` #### handleCrossChainRequestEvent ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`);
+    logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`);
     let record = new types_1.CrossChainRequestEvent(`${ident.toString()}`);
     record.acc = acc.toString();
     record.iden = `${ident.toString()}`;
     record.create_bn = BigInt(`${event.block.block.header.number.toString()}`);
     record.final_type = 0;
+    record.tx_hash = event.extrinsic.extrinsic.hash.toString();
     record.amount = BigInt(amount.toString());
     // @ts-ignore
     if (kind.isEth) {
@@ -407,9 +408,6 @@ exports.handleCrossChainRequestEvent = handleCrossChainRequestEvent;
 async function handleManualBridgeCompletedListEvent(event) {
     const { event: { data: [completedList] } } = event;
     const completedJson = completedList.toString();
-    // const completedJson = JSON.parse(completedList.toString())
-    logger.info("################### C");
-    logger.info(completedJson);
     const completedObjList = JSON.parse(completedJson);
     for (const idx in completedObjList) {
         const requestEvent = await types_1.CrossChainRequestEvent.get(`${completedObjList[idx].iden}`);
@@ -418,20 +416,5 @@ async function handleManualBridgeCompletedListEvent(event) {
             await requestEvent.save();
         }
     }
-    // for(const idx in completedList){
-    //     logger.info(idx)
-    //     const completedObj = completedList[idx]
-    //     logger.info(completedObj)
-    //     logger.info("==========================")
-    //     for(const idz in completedObj.toArray()) {
-    //         logger.info(idz)
-    //         logger.info(completedObj.iden)
-    //         logger.info(completedObj.kind)
-    //         logger.info(completedObj.amount)
-    //
-    //     }
-    // }
-    // logger.info(completedList[0].iden)
-    // logger.info(completedList[0].amount)
 }
 exports.handleManualBridgeCompletedListEvent = handleManualBridgeCompletedListEvent;
