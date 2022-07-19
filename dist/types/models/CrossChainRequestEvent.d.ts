@@ -6,6 +6,7 @@ export declare class CrossChainRequestEvent implements Entity {
     acc?: string;
     create_bn?: bigint;
     final_type?: number;
+    tx_hash?: string;
     iden?: string;
     kind?: string;
     dest?: string;
