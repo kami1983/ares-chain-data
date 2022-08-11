@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleManualBridgeCompletedListEvent = exports.handleCrossChainRequestEvent = exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
+exports.handleEraPaidEvent = exports.handlePayoutStartedEvent = exports.handleManualBridgeCompletedListEvent = exports.handleCrossChainRequestEvent = exports.handleEventStakingRewarded = exports.handleEventSessionNewSession = exports.handleEventImOnlineSomeOffline = exports.handleEventStakingChilled = exports.handleEventStakingBonded = exports.handleEventAresOracleNewPreCheckResult = exports.handleEventAresOracleNewPreCheckTask = exports.handleEventPayForPurchase = exports.handleEventInsufficientCountOfValidators = exports.handleEventAresOracleNewPurchasedRequest = exports.handleEventAresOraclePurchasedAvgPrice = exports.handleEventEndOfAskEra = exports.handleEventPurchaseRewardToken = void 0;
 const types_1 = require("../types");
 // created_at: T::BlockNumber,
 //     era: EraIndex,
@@ -364,7 +364,7 @@ async function handleCrossChainRequestEvent(event) {
     const { event: { data: [acc, ident, kind, amount] } } = event;
     const timestamp = await api.query.timestamp.now();
     // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
-    logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`);
+    // logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`, );
     let record = new types_1.CrossChainRequestEvent(`${ident.toString()}`);
     record.acc = acc.toString();
     record.iden = `${ident.toString()}`;
@@ -418,3 +418,26 @@ async function handleManualBridgeCompletedListEvent(event) {
     }
 }
 exports.handleManualBridgeCompletedListEvent = handleManualBridgeCompletedListEvent;
+async function handlePayoutStartedEvent(event) {
+    const { event: { data: [era_index, validator_stash] } } = event;
+    // #### handlePayoutStartedEvent 14, 4QSscABGHjAEwHbSbQGfAyaNXCzXRiD3ZsVEjYzjeskbkvHh
+    logger.info(` #### handlePayoutStartedEvent ${era_index}, ${validator_stash}`);
+    let record = new types_1.StakingPayoutStartedEvent(`${event.block.block.header.number.toString()}-${event.idx}`);
+    record.event_bn = event.block.block.header.number.toString();
+    record.era_num = parseInt(era_index.toString());
+    record.validator_stashId = validator_stash.toString();
+    await record.save();
+}
+exports.handlePayoutStartedEvent = handlePayoutStartedEvent;
+async function handleEraPaidEvent(event) {
+    const { event: { data: [era_index, validator_payout, remainder] } } = event;
+    // #### handleEraPaidEvent 14, 72396439552017467, 202331015141789708
+    logger.info(` #### handleEraPaidEvent ${era_index}, ${validator_payout}, ${remainder}`);
+    let record = new types_1.StakingEraPaidEvent(`${event.block.block.header.number.toString()}-${event.idx}`);
+    record.event_bn = event.block.block.header.number.toString();
+    record.era_num = parseInt(era_index.toString());
+    record.validator_payout = validator_payout.toBigInt();
+    record.remainder = remainder.toBigInt();
+    await record.save();
+}
+exports.handleEraPaidEvent = handleEraPaidEvent;

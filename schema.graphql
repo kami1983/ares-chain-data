@@ -1,9 +1,11 @@
+#
 type AresAccount @entity {
   id: ID!
   staking_total_reward: BigInt
   ref_staking_bonded_events: [StakingBondedEvent] @derivedFrom(field: "who")
   ref_staking_chilled_events: [StakingChilledEvent] @derivedFrom(field: "who")
   ref_staking_im_online_some_offline_events: [ImOnlineSomeOfflineEvent] @derivedFrom(field: "who")
+  ref_payout_started_events: [StakingPayoutStartedEvent] @derivedFrom(field: "validator_stash")
 }
 
 type StakingBondedEvent @entity {
@@ -219,6 +221,27 @@ type EndOfAskEra @entity {
   era_income: BigInt! @index,
   era_points: BigInt! @index
 }
+
+################# ------------- 0811 BEGIN
+# era_index, validator_stash]
+# StakingPayoutStartedEvent.validator_stash
+type StakingPayoutStartedEvent @entity {
+  id: ID!
+  era_num: Int! @index,
+  validator_stash: AresAccount,
+  event_bn: String
+}
+
+# id, era, validator_payout, remainder
+type StakingEraPaidEvent @entity {
+  id: ID!
+  era_num: Int! @index,
+  validator_payout: BigInt! @index,
+  remainder: BigInt! @index,
+  event_bn: String
+}
+
+################# ------------- 0811 END
 
 type PreCheckStruct @jsonField {
   price_key: String!

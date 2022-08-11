@@ -24,7 +24,11 @@ import {
     SessionNewSessionEvent,
     StakingRewardRecord,
     StakingRewardedEvent,
-    TotalAmountOfRewardRecord, StakingErasTotalStakeRecord, CrossChainRequestEvent
+    TotalAmountOfRewardRecord,
+    StakingErasTotalStakeRecord,
+    CrossChainRequestEvent,
+    StakingPayoutStartedEvent,
+    StakingEraPaidEvent
 } from "../types";
 import {Balance} from "@polkadot/types/interfaces";
 
@@ -487,7 +491,7 @@ export async function handleCrossChainRequestEvent(event: SubstrateEvent) : Prom
     } = event;
     const timestamp = await api.query.timestamp.now();
     // logger.info(` #### handleCrossChainRequestEvent ${timestamp}.`, acc, ident, kind, amount);
-    logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`, );
+    // logger.info(` #### handleCrossChainRequestEvent 2 ${event.extrinsic.extrinsic.hash}, ${acc.toHuman()}, ${ident.toHuman()}， ${kind.toHuman()}， ${amount.toHuman()}.`, );
     let record = new CrossChainRequestEvent(`${ident.toString()}`)
     record.acc = acc.toString()
     record.iden = `${ident.toString()}`
@@ -544,4 +548,35 @@ export async function handleManualBridgeCompletedListEvent(event: SubstrateEvent
         }
     }
 
+}
+
+export async function handlePayoutStartedEvent(event: SubstrateEvent): Promise<void> {
+    const {
+        event: {
+            data:  [era_index, validator_stash]
+        }
+    } = event
+    // #### handlePayoutStartedEvent 14, 4QSscABGHjAEwHbSbQGfAyaNXCzXRiD3ZsVEjYzjeskbkvHh
+    logger.info(` #### handlePayoutStartedEvent ${era_index}, ${validator_stash}`)
+    let record = new StakingPayoutStartedEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
+    record.event_bn = event.block.block.header.number.toString()
+    record.era_num = parseInt(era_index.toString())
+    record.validator_stashId = validator_stash.toString()
+    await record.save()
+}
+
+export async function handleEraPaidEvent(event: SubstrateEvent): Promise<void> {
+    const {
+        event: {
+            data: [era_index, validator_payout, remainder]
+        }
+    } = event
+    // #### handleEraPaidEvent 14, 72396439552017467, 202331015141789708
+    logger.info(` #### handleEraPaidEvent ${era_index}, ${validator_payout}, ${remainder}`)
+    let record = new StakingEraPaidEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
+    record.event_bn = event.block.block.header.number.toString()
+    record.era_num = parseInt(era_index.toString())
+    record.validator_payout = (validator_payout as Balance).toBigInt()
+    record.remainder = (remainder as Balance).toBigInt()
+    await record.save()
 }

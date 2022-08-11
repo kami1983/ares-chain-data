@@ -14,3 +14,5 @@ export declare function handleEventSessionNewSession(event: SubstrateEvent): Pro
 export declare function handleEventStakingRewarded(event: SubstrateEvent): Promise<void>;
 export declare function handleCrossChainRequestEvent(event: SubstrateEvent): Promise<void>;
 export declare function handleManualBridgeCompletedListEvent(event: SubstrateEvent): Promise<void>;
+export declare function handlePayoutStartedEvent(event: SubstrateEvent): Promise<void>;
+export declare function handleEraPaidEvent(event: SubstrateEvent): Promise<void>;

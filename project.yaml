@@ -15,12 +15,14 @@ network:
 #  endpoint: ws://202.182.100.187:7644
 #  genesisHash: '0xb8bafa2977b149453373c45481f0a3a871b6bc5719d753b3a1403b4d74c14ef2'
   endpoint: wss://odyssey.aresprotocol.io
-  genesisHash: '0xfe7ab916fe68f6e5df37b7778eaffe4d61c4faa915abd12723b08b72895f461e'
+  genesisHash: '0x0f3665e2e57fb38fd638145b69e567fb05bbadfd457624f90f15e5dbb31320bb'
   chaintypes:
     file: ./types.json
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1
+#    startBlock: 217045 # handlePayoutStartedEvent
+#    startBlock: 215883 # handleEraPaidEvent
+    startBlock: 220971
     mapping:
       file: ./dist/index.js
       handlers:
@@ -103,3 +105,14 @@ dataSources:
           filter:
             module: manualBridge
             method: CompletedList
+        - handler: handlePayoutStartedEvent
+          kind: substrate/EventHandler
+          filter:
+            module: staking
+            method: PayoutStarted
+        - handler: handleEraPaidEvent
+          kind: substrate/EventHandler
+          filter:
+            module: staking
+            method: EraPaid
+
