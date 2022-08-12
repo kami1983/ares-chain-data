@@ -44,7 +44,7 @@ export async function handleEventPurchaseRewardToken(event: SubstrateEvent): Pro
     } = event;
 
     let record = new PurchaseRewardToken(`${event.block.block.header.number.toString()}-${event.idx}`);
-    record.event_bn = event.block.block.header.number.toString();
+    record.event_bn = event.block.block.header.number.toBigInt()
     record.era_num = parseInt(era_num.toString());
     record.who = who.toString();
     record.reward = (reward as Balance).toBigInt();
@@ -217,7 +217,7 @@ export async function handleEventAresOracleNewPreCheckTask(event: SubstrateEvent
     let record = new NewPreCheckTask(`${event.block.block.header.number.toString()}-${event.idx}`);
     record.stash_account = stash_account.toString();
     record.ares_account = ares_account.toString();
-    record.event_bn = event.block.block.header.number.toString();
+    record.event_bn = event.block.block.header.number.toBigInt()
     record.create_bn = create_bn.toString();
     record.check_resultId = `${stash_account.toString()}-${create_bn.toString()}`;
     await record.save();
@@ -232,7 +232,7 @@ export async function handleEventAresOracleNewPreCheckResult(event: SubstrateEve
 
     let record = new NewPreCheckResult(`${stash_account.toString()}-${task_at.toString()}`);
     record.stash_account = stash_account.toString();
-    record.event_bn = event.block.block.header.number.toString();
+    record.event_bn = event.block.block.header.number.toBigInt()
     record.create_bn = create_bn.toString();
     record.result_status = result_status.toString();
     record.work_data = [];
@@ -466,12 +466,27 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
             data: [stash_id, reward_balance]
         }
     } = event;
+
+
+    // Find near PayoutStart
+    // let currentEventId =  parseInt(event.idx.toString())
+    // let stakingPayoutStartObj = null
+    // while (currentEventId-- && stakingPayoutStartObj == null){
+    //     logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
+    //     stakingPayoutStartObj = await StakingPayoutStartedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
+    // }
+
+
+    // stakingRewardedEvent
     const timestamp = await api.query.timestamp.now();
     const aresAcc = await makeAresAccount(stash_id.toString())
     let record = new StakingRewardedEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
     record.event_bn = event.block.block.header.number.toBigInt()
     record.whoId = stash_id.toString()
     record.deposit = (reward_balance as Balance).toBigInt();
+    // if(stakingPayoutStartObj){
+    //     record.era_num = stakingPayoutStartObj.era_num
+    // }
     record = fillTimeInfos(record, timestamp.toNumber())
     await record.save()
 
@@ -556,13 +571,29 @@ export async function handlePayoutStartedEvent(event: SubstrateEvent): Promise<v
             data:  [era_index, validator_stash]
         }
     } = event
+
+
+
     // #### handlePayoutStartedEvent 14, 4QSscABGHjAEwHbSbQGfAyaNXCzXRiD3ZsVEjYzjeskbkvHh
     logger.info(` #### handlePayoutStartedEvent ${era_index}, ${validator_stash}`)
     let record = new StakingPayoutStartedEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
-    record.event_bn = event.block.block.header.number.toString()
+    record.event_bn = event.block.block.header.number.toBigInt()
     record.era_num = parseInt(era_index.toString())
     record.validator_stashId = validator_stash.toString()
     await record.save()
+
+    // Find near PayoutReward
+    let currentEventId =  parseInt(event.idx.toString())
+
+    while (currentEventId++ && currentEventId < 200){
+        // logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
+        let stakingRewardedObj = await StakingRewardedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
+        if(stakingRewardedObj){
+            // logger.info(`FIND IN !!!! = ${stakingRewardedObj.era_num}`)
+            stakingRewardedObj.era_num = record.era_num
+            await stakingRewardedObj.save()
+        }
+    }
 }
 
 export async function handleEraPaidEvent(event: SubstrateEvent): Promise<void> {
@@ -573,10 +604,16 @@ export async function handleEraPaidEvent(event: SubstrateEvent): Promise<void> {
     } = event
     // #### handleEraPaidEvent 14, 72396439552017467, 202331015141789708
     logger.info(` #### handleEraPaidEvent ${era_index}, ${validator_payout}, ${remainder}`)
+
     let record = new StakingEraPaidEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
-    record.event_bn = event.block.block.header.number.toString()
+    record.event_bn = event.block.block.header.number.toBigInt()
     record.era_num = parseInt(era_index.toString())
     record.validator_payout = (validator_payout as Balance).toBigInt()
     record.remainder = (remainder as Balance).toBigInt()
     await record.save()
+
+    const [stakingRewardObj, isNew] = await makeStakingRewardRecord(`${record.era_num}`)
+    stakingRewardObj.remainder = record.remainder
+    stakingRewardObj.validator_payout = record.validator_payout
+    stakingRewardObj.save()
 }

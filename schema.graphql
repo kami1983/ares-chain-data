@@ -53,6 +53,8 @@ type StakingRewardRecord @entity {
   event_bn: BigInt
   staking_era: Int
   eras_validator_reward: BigInt
+  validator_payout: BigInt @index
+  remainder: BigInt @index
 }
 
 # total amount of rewards received
@@ -72,6 +74,7 @@ type StakingErasTotalStakeRecord @entity {
 type StakingRewardedEvent @entity {
   id: ID! #
   who: AresAccount
+  era_num: Int @index
   event_bn: BigInt
   deposit: BigInt
   timestamp: BigInt
@@ -112,7 +115,7 @@ type NewPurchasedRequestEvent @entity {
 #aresOracle.InsufficientCountOfValidators
 type InsufficientCountOfValidators @entity {
   id: ID! # blocknumber+Eventid
-  event_bn: String,
+  event_bn: BigInt,
   purchased_id: String,
   purchased_event: NewPurchasedRequestEvent!
 }
@@ -128,7 +131,7 @@ type PayForPurchase @entity {
   id: ID! # blocknumber+Eventid
   agg_count: Int,
   dest: String,
-  event_bn: String,
+  event_bn: BigInt,
   fee: BigInt! @index,
   purchased_id: String,
   purchased_event: NewPurchasedRequestEvent!
@@ -185,7 +188,7 @@ type NewPreCheckTask @entity {
   stash_account: String! @index
   ares_account: String!
   create_bn: String!
-  event_bn: String!
+  event_bn: BigInt!
   check_result: NewPreCheckResult!
 }
 
@@ -193,7 +196,7 @@ type NewPreCheckResult @entity {
   id: ID! # stash_account+create_bn
   stash_account: String! @index
   create_bn: String!
-  event_bn: String
+  event_bn: BigInt
   work_data: [PreCheckStruct]!
   result_status: String
   task_infos: [NewPreCheckTask] @derivedFrom(field: "check_result")
@@ -201,7 +204,7 @@ type NewPreCheckResult @entity {
 
 type PurchaseRewardToken @entity {
   id: ID! # blocknumber+Eventid
-  event_bn: String,
+  event_bn: BigInt,
   era_num: Int! @index,
   who: String! @index,
   reward: BigInt! @index
@@ -215,7 +218,7 @@ type TotalPurchaseRewardToken @entity {
 # oracleFinance.EndOfAskEra
 type EndOfAskEra @entity {
   id: ID! # blocknumber+Eventid
-  event_bn: String,
+  event_bn: BigInt,
   session_index: Int! @index,
   era_num: Int! @index,
   era_income: BigInt! @index,
@@ -229,7 +232,7 @@ type StakingPayoutStartedEvent @entity {
   id: ID!
   era_num: Int! @index,
   validator_stash: AresAccount,
-  event_bn: String
+  event_bn: BigInt
 }
 
 # id, era, validator_payout, remainder
@@ -238,7 +241,7 @@ type StakingEraPaidEvent @entity {
   era_num: Int! @index,
   validator_payout: BigInt! @index,
   remainder: BigInt! @index,
-  event_bn: String
+  event_bn: BigInt
 }
 
 ################# ------------- 0811 END
