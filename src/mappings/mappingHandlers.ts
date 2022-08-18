@@ -576,6 +576,7 @@ export async function handlePayoutStartedEvent(event: SubstrateEvent): Promise<v
 
     // #### handlePayoutStartedEvent 14, 4QSscABGHjAEwHbSbQGfAyaNXCzXRiD3ZsVEjYzjeskbkvHh
     logger.info(` #### handlePayoutStartedEvent ${era_index}, ${validator_stash}`)
+    await makeAresAccount(validator_stash.toString())
     let record = new StakingPayoutStartedEvent(`${event.block.block.header.number.toString()}-${event.idx}`)
     record.event_bn = event.block.block.header.number.toBigInt()
     record.era_num = parseInt(era_index.toString())
@@ -587,6 +588,7 @@ export async function handlePayoutStartedEvent(event: SubstrateEvent): Promise<v
 
     while (currentEventId++ && currentEventId < 200){
         // logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
+        // 121719-
         let stakingRewardedObj = await StakingRewardedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
         if(stakingRewardedObj){
             // logger.info(`FIND IN !!!! = ${stakingRewardedObj.era_num}`)
