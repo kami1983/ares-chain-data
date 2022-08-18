@@ -476,6 +476,7 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
     //     stakingPayoutStartObj = await StakingPayoutStartedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
     // }
 
+    logger.info(`handleEventStakingRewarded ====== Before than started_events !!!!!`, stash_id, reward_balance)
 
     // stakingRewardedEvent
     const timestamp = await api.query.timestamp.now();
@@ -587,8 +588,7 @@ export async function handlePayoutStartedEvent(event: SubstrateEvent): Promise<v
     let currentEventId =  parseInt(event.idx.toString())
 
     while (currentEventId++ && currentEventId < 200){
-        // logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
-        // 121719-
+        logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
         let stakingRewardedObj = await StakingRewardedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
         if(stakingRewardedObj){
             // logger.info(`FIND IN !!!! = ${stakingRewardedObj.era_num}`)
