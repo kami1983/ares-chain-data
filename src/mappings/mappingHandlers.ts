@@ -491,8 +491,12 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
     record = fillTimeInfos(record, timestamp.toNumber())
     await record.save()
 
+    logger.info(`handleEventStakingRewarded fillTimeInfos done`)
+
     aresAcc.staking_total_reward = BigInt(aresAcc.staking_total_reward) + BigInt(record.deposit)
     await aresAcc.save()
+
+    logger.info(`handleEventStakingRewarded staking_total_reward updated.`)
 
     let rewardObj = await getTotalAmountOfRewardRecordObj()
     rewardObj.total_reward_of_claimed += BigInt(record.deposit)
