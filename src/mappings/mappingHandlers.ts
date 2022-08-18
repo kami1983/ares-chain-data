@@ -469,14 +469,14 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
 
 
     // Find near PayoutStart
-    // let currentEventId =  parseInt(event.idx.toString())
-    // let stakingPayoutStartObj = null
-    // while (currentEventId-- && stakingPayoutStartObj == null){
-    //     logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
-    //     stakingPayoutStartObj = await StakingPayoutStartedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
-    // }
+    let currentEventId =  parseInt(event.idx.toString())
+    let stakingPayoutStartObj = null
+    while (currentEventId-- && stakingPayoutStartObj == null){
+        logger.info(`block_number::####--- ${event.block.block.header.number.toString()}-${currentEventId}`);
+        stakingPayoutStartObj = await StakingPayoutStartedEvent.get(`${event.block.block.header.number.toString()}-${currentEventId}`)
+    }
 
-    logger.info(`handleEventStakingRewarded ====== Before than started_events !!!!!`, stash_id, reward_balance)
+    logger.info(`handleEventStakingRewarded ====== Before than started_events !!!!!`, stakingPayoutStartObj)
 
     // stakingRewardedEvent
     const timestamp = await api.query.timestamp.now();
@@ -485,18 +485,14 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
     record.event_bn = event.block.block.header.number.toBigInt()
     record.whoId = stash_id.toString()
     record.deposit = (reward_balance as Balance).toBigInt();
-    // if(stakingPayoutStartObj){
-    //     record.era_num = stakingPayoutStartObj.era_num
-    // }
+    if(stakingPayoutStartObj){
+        record.era_num = stakingPayoutStartObj.era_num
+    }
     record = fillTimeInfos(record, timestamp.toNumber())
     await record.save()
 
-    logger.info(`handleEventStakingRewarded fillTimeInfos done`)
-
     aresAcc.staking_total_reward = BigInt(aresAcc.staking_total_reward) + BigInt(record.deposit)
     await aresAcc.save()
-
-    logger.info(`handleEventStakingRewarded staking_total_reward updated.`)
 
     let rewardObj = await getTotalAmountOfRewardRecordObj()
     rewardObj.total_reward_of_claimed += BigInt(record.deposit)
