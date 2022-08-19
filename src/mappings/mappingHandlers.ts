@@ -439,7 +439,7 @@ export async function handleEventSessionNewSession(event: SubstrateEvent): Promi
         if(validator_reward.isSome){
 
             const [stakingRewardObj, isNew] = await makeStakingRewardRecord(`${reward_staking_active_era}`)
-            if(isNew){
+            if(isNew || !stakingRewardObj.event_bn){
                 stakingRewardObj.eras_validator_reward = (validator_reward.value as Balance).toBigInt();
                 stakingRewardObj.event_bn = event.block.block.header.number.toBigInt()
                 stakingRewardObj.staking_era = reward_staking_active_era
@@ -466,7 +466,6 @@ export async function handleEventStakingRewarded(event: SubstrateEvent): Promise
             data: [stash_id, reward_balance]
         }
     } = event;
-
 
     // Find near PayoutStart
     let currentEventId =  parseInt(event.idx.toString())
@@ -614,8 +613,8 @@ export async function handleEraPaidEvent(event: SubstrateEvent): Promise<void> {
     record.remainder = (remainder as Balance).toBigInt()
     await record.save()
 
-    const [stakingRewardObj, isNew] = await makeStakingRewardRecord(`${record.era_num}`)
+    const [stakingRewardObj, _isNew] = await makeStakingRewardRecord(`${record.era_num}`)
     stakingRewardObj.remainder = record.remainder
     stakingRewardObj.validator_payout = record.validator_payout
-    stakingRewardObj.save()
+    await stakingRewardObj.save()
 }
