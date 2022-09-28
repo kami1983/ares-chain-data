@@ -6,31 +6,31 @@ repository:
 schema:
   file: ./schema.graphql
 network:
-  endpoint: wss://gladios.aresprotocol.io
-  genesisHash: '0xf56ac8d7b43a12cd25a026f5da504a37e2c55bafd692fe65b5595e78815b993a'
-#  endpoint: ws://192.168.50.44:9944
-#  genesisHash: '0xb8f3755a5250d66e20316f04a7b0981735202f758abafc46fbf1ec19a397d2b0'
-#  endpoint: ws://202.182.100.187:19944
-#  genesisHash: '0x9ed76c03eb5c876f98df99154b2df716646ba475d4bdf66551c919c346724cc4'
-#  endpoint: ws://202.182.100.187:7644
-#  genesisHash: '0xb8bafa2977b149453373c45481f0a3a871b6bc5719d753b3a1403b4d74c14ef2'
-#  endpoint: wss://odyssey.aresprotocol.io
-#  genesisHash: '0x0f3665e2e57fb38fd638145b69e567fb05bbadfd457624f90f15e5dbb31320bb'
+  endpoint: wss://odyssey.aresprotocol.io
+  genesisHash: '0x0f3665e2e57fb38fd638145b69e567fb05bbadfd457624f90f15e5dbb31320bb'
+  #  endpoint: ws://192.168.50.44:9944
+  #  genesisHash: '0xb8f3755a5250d66e20316f04a7b0981735202f758abafc46fbf1ec19a397d2b0'
+  #  endpoint: ws://202.182.100.187:19944
+  #  genesisHash: '0x9ed76c03eb5c876f98df99154b2df716646ba475d4bdf66551c919c346724cc4'
+  #  endpoint: ws://202.182.100.187:7644
+  #  genesisHash: '0xb8bafa2977b149453373c45481f0a3a871b6bc5719d753b3a1403b4d74c14ef2'
+  #  endpoint: wss://odyssey.aresprotocol.io
+  #  genesisHash: '0x0f3665e2e57fb38fd638145b69e567fb05bbadfd457624f90f15e5dbb31320bb'
   chaintypes:
     file: ./types.json
 dataSources:
   - kind: substrate/Runtime
-#    startBlock: 217045 # handlePayoutStartedEvent
-#    startBlock: 215883 # handleEraPaidEvent
-    startBlock: 200000
-#    startBlock: 212615
+    #    startBlock: 217045 # handlePayoutStartedEvent
+    #    startBlock: 215883 # handleEraPaidEvent
+    startBlock: 1
+    #    startBlock: 212615
     mapping:
       file: ./dist/index.js
       handlers:
-#        - handler: handleBlock
-#          kind: substrate/BlockHandler
-#        - handler: handleCall
-#          kind: substrate/CallHandler
+        #        - handler: handleBlock
+        #          kind: substrate/BlockHandler
+        #        - handler: handleCall
+        #          kind: substrate/CallHandler
         - handler: handleEventAresOraclePurchasedAvgPrice
           kind: substrate/EventHandler
           filter:
@@ -116,4 +116,3 @@ dataSources:
           filter:
             module: staking
             method: EraPaid
-

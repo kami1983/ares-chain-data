@@ -15,7 +15,6 @@ module.exports.checkAndSendCrossChainEmails = function () {
     return new Promise(function (resolve, reject) {
         pool.query(`select * from app.cross_chain_request_events where status is null `,
             async (db_err, db_res) => {
-
             if (db_err) {
                 result.message = db_err.toString();
                 result.status_info = 'failed'
@@ -23,47 +22,52 @@ module.exports.checkAndSendCrossChainEmails = function () {
                 for (const idx in db_res.rows) {
                     const db_data = db_res.rows[idx]
                     if (!db_data.status) {
+                        //First lock item.
+                        await updateEventStatus(db_data.id, 'Waiting send.')
                         const emailId = await sendEmail('test@cancanyou.com', '630086711@qq.com',  db_data)
                         if("" != emailId) {
-                            updateEventStatus(db_data.id, emailId)
+                            await updateEventStatus(db_data.id, emailId)
                         }
                     }
                     result.message = JSON.stringify(db_res.rows)
                     result.status_info = 'success'
                 }
-                pool.end()
-                // res.render('msg', result)
             }
+            pool.end()
             resolve(result)
         })
     });
 }
 
 function createDbPool() {
-    const pool = new Pool({
+    const poolOption = {
         user: process.env.PG_USER,
         host: process.env.PG_HOST,
         database: process.env.PG_DATABASE,
         password: process.env.PG_PASS,
         port:  process.env.PG_PORT,
-    })
-    return pool
+    }
+    // console.log('poolOption', poolOption)
+    return new Pool(poolOption)
 }
 
 function updateEventStatus(db_id, email_id) {
     const update_sql = `UPDATE app.cross_chain_request_events SET status = '${email_id}' WHERE id='${db_id}'`;
-
     //
     const pool = createDbPool()
-
-    pool.query(update_sql, (db_err, db_res) => {
-        if(db_err) {
-            console.log("########### ERROR = ", db_err)
-            throw new Error(db_err.toString())
-        }else{
-            console.log("########### UPDATE = ", db_id)
-        }})
-
+    return new Promise((resolve, rejects)=>{
+        pool.query(update_sql, (db_err, db_res) => {
+          if(db_err) {
+              console.log("########### ERROR = ", db_err)
+              // throw new Error(db_err.toString())
+              pool.end()
+              rejects(db_err)
+          }else{
+              console.log("########### UPDATE = ", db_id)
+              pool.end()
+              resolve(db_id)
+          }})
+    })
 }
 
 async function sendEmail(sender, to, dbData) {
@@ -97,6 +101,7 @@ async function sendEmail(sender, to, dbData) {
 <hr/>
 <p>输入序列：</p>
 <p><b>${dbData.acc},${dbData.iden},${dbData.kind},${dbData.dest},${dbData.amount}</b></p>
+<p>Service id: ${process.env.APP_SERVICE_ID}</p>
 `, // html body
         });
 
