@@ -22,7 +22,7 @@ dataSources:
   - kind: substrate/Runtime
     #    startBlock: 217045 # handlePayoutStartedEvent
     #    startBlock: 215883 # handleEraPaidEvent
-    startBlock: 7143000
+    startBlock: 7000000
     #    startBlock: 212615
     mapping:
       file: ./dist/index.js
